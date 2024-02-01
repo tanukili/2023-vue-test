@@ -1,8 +1,43 @@
-<script setup>
+<script>
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import { RouterLink, RouterView } from 'vue-router';
 import HelloWorld from './components/HelloWorld.vue';
+import SwiperComponents from './components/SwiperComponents.vue';
 
-console.log(import.meta.env.VITE_API_PATH);
+export default {
+  components: {
+    RouterLink,
+    HelloWorld,
+    RouterView,
+    SwiperComponents,
+  },
+  data() {
+    return {
+      swiper: null,
+    };
+  },
+  mounted() {
+    // 測試區塊開始
+    console.log(import.meta.env.VITE_API_PATH);
+    this.axios.get('https://randomuser.me/api/').then((res) => {
+      console.log(res.data);
+    });
+    const submit = () => {
+      const loader = this.$loading.show({
+        // Optional parameters
+      });
+      // simulate AJAX
+      setTimeout(() => {
+        loader.hide();
+        this.$swal('Hello Vue world!!!');
+      }, 2000);
+    };
+    submit();
+    AOS.init();
+    // 測試區塊結束
+  },
+};
 </script>
 
 <template>
@@ -11,7 +46,28 @@ console.log(import.meta.env.VITE_API_PATH);
 
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
-
+      <!-- 測試區塊開始 -->
+      <button type="button" class="btn btn-primary">Primary</button>
+      <VForm novalidate @submit="onSubmit">
+        <VField
+          id="email"
+          name="email"
+          type="email"
+          class="form-control"
+          placeholder="請輸入 Email"
+          rules="email|required"
+        ></VField>
+        <label for="email">信箱</label>
+        <ErrorMessage name="email" v-slot="{ message }">
+          <p>ERRROR: {{ message }}</p>
+        </ErrorMessage>
+      </VForm>
+      <SwiperComponents></SwiperComponents>
+      <div class="d-flex">
+        <div class="box" data-aos="fade-up"></div>
+        <div class="box" data-aos="fade-down"></div>
+      </div>
+      <!-- 測試區塊結束 -->
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
@@ -22,66 +78,15 @@ console.log(import.meta.env.VITE_API_PATH);
   <RouterView />
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
+<style scoped lang="scss">
+@import './assets/all.scss';
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
+$primary: blue;
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+.box {
+  width: 100px;
+  height: 100px;
+  margin: 20px;
+  background-color: $primary;
 }
 </style>

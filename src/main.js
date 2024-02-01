@@ -1,14 +1,41 @@
-import './assets/main.css'
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import VueAxios from 'vue-axios';
+import axios from 'axios';
 
-import App from './App.vue'
-import router from './router'
+import { Field, Form, ErrorMessage, defineRule, configure } from 'vee-validate';
+import * as rules from '@vee-validate/rules';
+import { localize, setLocale } from '@vee-validate/i18n';
+import zhTw from '@vee-validate/i18n/dist/locale/zh_TW.json';
 
-const app = createApp(App)
+import { LoadingPlugin } from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/css/index.css';
 
-app.use(createPinia())
-app.use(router)
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
-app.mount('#app')
+import App from './App.vue';
+import router from './router';
+
+Object.keys(rules).forEach((rule) => {
+  defineRule(rule, rules[rule]);
+});
+setLocale('zh_TW');
+configure({
+  generateMessage: localize({ zh_TW: zhTw }),
+  validateOnInput: true,
+});
+
+const app = createApp(App);
+
+app.use(createPinia());
+app.use(router);
+app.use(VueAxios, axios);
+app.component('VForm', Form);
+app.component('VField', Field);
+app.component('ErrorMessage', ErrorMessage);
+app.use(LoadingPlugin);
+app.use(VueSweetalert2);
+
+app.mount('#app');
